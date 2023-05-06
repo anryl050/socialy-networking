@@ -1,19 +1,26 @@
 const { Thought, User } = require('../models');
 
 module.exports = {
-  // Get all courses
-  async getCourses(req, res) {
+  // Get all thoughts
+  async getThoughts(req, res) {
     try {
-      const courses = await Course.find();
-      res.json(courses);
+      const thoughtData = await Thought
+      .find()
+
+      res.json(thoughtData);
+
     } catch (err) {
-      res.status(500).json(err);
+      res
+      .status(500)
+      .json(err);
     }
   },
-  // Get a course
-  async getSingleCourse(req, res) {
+  
+  // Get a single thought
+  async getIndividualThought(req, res) {
     try {
-      const course = await Course.findOne({ _id: req.params.courseId })
+      const thoughtData = await Thought
+      .findOne({ _id: req.params.thoughtId })
         .select('-__v');
 
       if (!course) {
@@ -25,8 +32,8 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Create a course
-  async createCourse(req, res) {
+  // Create a thought
+  async createThought(req, res) {
     try {
       const course = await Course.create(req.body);
       res.json(course);
@@ -35,8 +42,9 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // Delete a course
-  async deleteCourse(req, res) {
+
+  // Delete a thought
+  async deleteThought(req, res) {
     try {
       const course = await Course.findOneAndDelete({ _id: req.params.courseId });
 
@@ -50,8 +58,9 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
   // Update a course
-  async updateCourse(req, res) {
+  async updateThought(req, res) {
     try {
       const course = await Course.findOneAndUpdate(
         { _id: req.params.courseId },
@@ -68,4 +77,15 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-};
+  
+  // add a reaction to the thought
+  async addReaction(req, res){
+    
+  },
+
+  // remove a raction from the thought
+  async deleteReaction(req, res){
+
+  }
+}
+

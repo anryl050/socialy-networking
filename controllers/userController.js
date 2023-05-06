@@ -2,123 +2,195 @@ const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
-  // Get all students
-  async getStudents(req, res) {
-    try {
-      const students = await Student.find();
 
-      const studentObj = {
-        students,
-        headCount: await headCount(),
-      };
+    // Get all users
+    async getUsers(req, res) {
+        try {
+            const userData = await User
+                .find()
+                .select('-__v');
 
-      res.json(studentObj);
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(err);
-    }
-  },
-  // Get a single student
-  async getSingleStudent(req, res) {
-    try {
-      const student = await Student.findOne({ _id: req.params.studentId })
-        .select('-__v');
+            res.json(userData);
 
-      if (!student) {
-        return res.status(404).json({ message: 'No student with that ID' })
-      }
+        } catch (err) {
 
-      res.json({
-        student,
-        grade: await grade(req.params.studentId),
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(err);
-    }
-  },
-  // create a new student
-  async createStudent(req, res) {
-    try {
-      const student = await Student.create(req.body);
-      res.json(student);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+            console.log(err);
 
-    //   ! need a route for updating a user
+            return res
+                .status(500)
+                .json(err);
+        }
+    },
 
 
-  //TODO: Will this be similar to removing the user and user's thought? (Delete a student and remove them from the course)
-  async deleteStudent(req, res) {
-    try {
-      const student = await Student.findOneAndRemove({ _id: req.params.studentId });
+    // Get an individual user
+    async getIndividualUser(req, res) {
+        try {
+            const userData = await User
+                .findOne({ _id: req.params.userId })
+                .select('-__v')
+                .populate('friends')
+                .populate('thoughts');
 
-      if (!student) {
-        return res.status(404).json({ message: 'No such student exists' });
-      }
+            if (!userData) {
+                return res
+                    .status(404)
+                    .json({ message: 'No user with that ID' })
+            }
 
-      const course = await Course.findOneAndUpdate(
-        { students: req.params.studentId },
-        { $pull: { students: req.params.studentId } },
-        { new: true }
-      );
+            res.json(userData);
 
-      if (!course) {
-        return res.status(404).json({
-          message: 'Student deleted, but no courses found',
-        });
-      }
+        } catch (err) {
+            console.log(err);
+            return res
+                .status(500)
+                .json(err);
+        }
+    },
 
-      res.json({ message: 'Student successfully deleted' });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
-    }
-  },
+    // create a new user
+    async createUser(req, res) {
+        try {
+            const userData = await User
+                .create(req.body);
 
-  // Add an assignment to a student (add a friedn to a user's friend's list)(will this be similar to remocing the reaction from the though?)
-  async addAssignment(req, res) {
-    console.log('You are adding an assignment');
-    console.log(req.body);
+            res.json(userData);
 
-    try {
-      const student = await Student.findOneAndUpdate(
-        { _id: req.params.studentId },
-        { $addToSet: { assignments: req.body } },
-        { runValidators: true, new: true }
-      );
+        } catch (err) {
+            res
+                .status(500)
+                .json(err);
+        }
+    },
 
-      if (!student) {
-        return res
-          .status(404)
-          .json({ message: 'No student found with that ID :(' });
-      }
+    // update an existing user
+    async updateUser(req, res) {
+        try {
+            const userData = await User
+                .findOneAndUpdate(
+                    { _id: req.params.userId },
+                    { $set: req.body },
+                    {
+                        runValidators: true,
+                        new: true
+                    }
+                );
 
-      res.json(student);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-  // Remove assignment from a student (remove a frined from the user's friend's list?)
-  async removeAssignment(req, res) {
-    try {
-      const student = await Student.findOneAndUpdate(
-        { _id: req.params.studentId },
-        { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
-        { runValidators: true, new: true }
-      );
+            if (!userData) {
+                return res
+                    .status(404)
+                    .json({ message: 'No such user exists' });
+            }
 
-      if (!student) {
-        return res
-          .status(404)
-          .json({ message: 'No student found with that ID :(' });
-      }
+            res.json(userData);
 
-      res.json(student);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+        } catch (err) {
+            res
+                .status(500)
+                .json(err);
+        }
+    },
+
+
+
+    //Delete a user and remove associated user's thoughts
+    async deleteUser(req, res) {
+        try {
+            const userData = await User
+                .findOneAndRemove({ _id: req.params.userId });
+
+            if (!userData) {
+                return res
+                    .status(404)
+                    .json({ message: 'No such user exists' });
+            }
+
+            const thoughtData = await Thought
+                .deleteMany(
+                    {
+                        _id: {
+                            $in: userData.thoughts
+                        }
+                    }
+                );
+
+            if (thoughtData.deleteCount === 0) {
+                return res
+                    .status(404)
+                    .json({
+                        message: 'User was deleted; however, no thoughts were found',
+                    });
+            }
+
+            res.json({ message: 'User was successfully deleted' });
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // add a friend to a user's friend's list
+    async addFriend(req, res) {
+
+        console.log('You are adding a friend');
+        console.log(req.body);
+
+        try {
+            const userData = await User
+                .findOneAndUpdate(
+                    { _id: req.params.userId },
+                    { $addToSet: { friends: req.params.friendId } },
+                    {
+                        runValidators: true,
+                        new: true
+                    }
+                );
+
+            if (!userData) {
+                return res
+                    .status(404)
+                    .json({ message: 'No user found with that ID :(' });
+            }
+
+            res.json(userData);
+
+        } catch (err) {
+            res
+                .status(500)
+                .json(err);
+        }
+    },
+
+
+    // remove a frined from the user's friend's list
+    async deleteFriend(req, res) {
+        try {
+            const userData = await User.
+                findOneAndUpdate(
+                    { _id: req.params.userId },
+                    {
+                        $pull:
+                            { friends: req.params.friendId }
+                    },
+                    {
+                        runValidators: true,
+                        new: true
+                    }
+                );
+
+            if (!userData) {
+                return res
+                    .status(404)
+                    .json({ message: 'No user found with that ID :(' });
+            }
+
+            res.json(userData);
+
+        } catch (err) {
+            res
+                .status(500)
+                .json(err);
+        }
+    },
 };
