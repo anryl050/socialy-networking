@@ -14,7 +14,6 @@ const userSchema = new Schema(
             unique: true,
             required: true,
             // email address validation
-            // TODO: ask Dominique if this value can be replaced by any regex for the email address or does it have to be specific to this
             match: /.+\@.+\..+/,
         },
         // Array of _id values referencing the Thought model
@@ -37,8 +36,6 @@ const userSchema = new Schema(
         toJSON: {
             getters: true,
         },
-        // TODO: Ask Dominique what does this do? Mimicked it from the Mini Project
-        id: false,
     }
 );
 
