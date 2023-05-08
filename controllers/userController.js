@@ -150,7 +150,7 @@ module.exports = {
             if (!userData) {
                 return res
                     .status(404)
-                    .json({ message: 'No user found with that ID :(' });
+                    .json({ message: 'No user found with that ID' });
             }
 
             res.json(userData);
@@ -165,9 +165,13 @@ module.exports = {
 
     // remove a frined from the user's friend's list
     async deleteFriend(req, res) {
+
+        console.log('You are removing a friend');
+        console.log(req.body);
+
         try {
-            const userData = await User.
-                findOneAndUpdate(
+            const userData = await User
+                .findOneAndUpdate(
                     { _id: req.params.userId },
                     {
                         $pull:
