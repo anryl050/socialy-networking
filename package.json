@@ -2,13 +2,11 @@
     "name": "Socailly-Networking",
     "version": "1.0.0",
     "description": "Mongoose back-end project - Main",
-    "main": "index.js",
+    "main": "server.js",
     "license": "MIT",
     "scripts": {
-        "start": "node index",
-        "dev": "nodemon index",
-        "seed": "node utils/seed",
-        "heroku-postbuild": "node utils/seed.js"
+        "start": "node server",
+        "dev": "nodemon server"
     },
     "dependencies": {
         "dayjs": "^1.11.7",

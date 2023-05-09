@@ -33,6 +33,7 @@ const reactionSchema = new Schema(
 );
 
 // Initialize Reaction model
-const Reaction = model('reaction', reactionSchema);
+// const Reaction = model('reaction', reactionSchema);
 
-module.exports = Reaction;
+// module.exports = Reaction;
+module.exports = reactionSchema;
