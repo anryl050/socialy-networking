@@ -6,8 +6,6 @@
 #### * [Project Desctiption](#description)
 #### * [Demo Video](#video)
 #### * [Installation/Technical Requirements](#installation)
-#### * [Usage](#usage)
-#### * [Tests](#tests)
 #### * [License](#license)
 
 
