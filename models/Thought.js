@@ -14,15 +14,20 @@ const thoughtSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            get: (date) => dayjs(date).format('DD/MM/YYYY')
+            get: (date) => dayjs(date).format('MM/DD/YYYY')
+        },
+        username: {
+            type: String
         },
         //   Array of nested documents created with the reactionSchema
         reactions: [reactionSchema]
     },
+    
     {
         toJSON: {
-            getters: true,
+            virtuals: true,
         },
+
         id: false,
     }
 );

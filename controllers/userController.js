@@ -97,7 +97,7 @@ module.exports = {
     async deleteUser(req, res) {
         try {
             const userData = await User
-                .findOneAndRemove({ _id: req.params.userId });
+                .findOneAndDelete({ _id: req.params.userId });
 
             if (!userData) {
                 return res
