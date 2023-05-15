@@ -4,8 +4,6 @@
 
 ## Table of Content
 #### * [Project Desctiption](#description)
-#### * [Additional Requirement](#requirements)
-#### * [Deployed Application](#application)
 #### * [Demo Video](#video)
 #### * [Installation/Technical Requirements](#installation)
 #### * [Usage](#usage)
@@ -14,7 +12,7 @@
 
 
 ## Project Description
-
+The scope of the project is to build an API for a social network web application where users can share their thoughts, react to friends’ thoughts, and create a friend list. 
 
 ### User Story
 - AS A social media startup
@@ -33,28 +31,18 @@ GIVEN a social network API:
 
 - WHEN I test API POST and DELETE routes in Insomnia, THEN I am able to successfully create and delete reactions to thoughts and add and remove friends to a user’s friend list. 
 
-
-## Additional Requirements
-
-
-## Deployed Application
-
-
 ## Demo Video
+[Click here for video](https://github.com/anryl050/socialy-networking/assets/118693401/a18fe1c1-a530-4972-b379-19fbc4a99850)
 
 
 ## Installation/Technical Requirements
+The can be deployed using Heroku services.
 
-
-## Usage
-
-
-## Tests
-
-
-## Contribution
-N/A
-
+Technology used:
+- Express.js for routing,
+- MongoDB database,
+- Mongoose ODM
+- DayJs
 
 ## License
 Licensed under the [MIT](https://choosealicense.com/licenses/mit/) license.
